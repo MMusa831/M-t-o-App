@@ -11,6 +11,7 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
+      humidity: null,
       country: null,
       city: null,
       icon: null,
@@ -82,7 +83,7 @@ class App extends React.Component {
     if (city && country) {
       axios
         .get(
-          `http://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${API_KEY}`
+          `https://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${API_KEY}`
         )
         .then((res) => {
           const response = res.data;
@@ -92,7 +93,9 @@ class App extends React.Component {
             celsius: this.calCelsius(response.main.temp),
             temp_max: this.calCelsius(response.main.temp_max),
             temp_min: this.calCelsius(response.main.temp_min),
+            humidity: response.main.humidity,
             description: response.weather[0].description,
+            error: false
           });
           this.get_weatherIcon(this.weatherIcon, response.weather[0].id);
         });
@@ -105,7 +108,7 @@ class App extends React.Component {
   };
   
   calCelsius = (temp) => {
-    let cell = Math.floor(temp - 273.5);
+    let cell = Math.floor(temp - 273.15);
     return cell;
   };
 
@@ -121,6 +124,7 @@ class App extends React.Component {
           temp_min={this.state.temp_min}
           description={this.state.description}
           weatherIcon={this.state.icon}
+          humidity={this.state.humidity}
         />
       </div>
     );
